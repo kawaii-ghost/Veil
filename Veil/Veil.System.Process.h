@@ -2509,6 +2509,8 @@ ZwResumeProcess(
 #define NtCurrentPeb()          ((PEB *)__readgsqword(FIELD_OFFSET(TEB, ProcessEnvironmentBlock)))
 #elif _M_IX86
 #define NtCurrentPeb()          ((PEB *)__readfsdword(FIELD_OFFSET(TEB, ProcessEnvironmentBlock)))
+#else
+#define NtCurrentPeb()          ((PEB *)(NtCurrentTeb()->ProcessEnvironmentBlock))
 #endif
 #define ZwCurrentPeb()          NtCurrentPeb()
 
@@ -2519,8 +2521,10 @@ ZwResumeProcess(
 #elif _M_IX86
 #define NtCurrentProcessId()    ((DWORD)__readfsdword(FIELD_OFFSET(TEB, ClientId.UniqueProcess)))
 #define NtCurrentThreadId()    ((DWORD)__readfsdword(FIELD_OFFSET(TEB, ClientId.UniqueThread)))
+#else
+#define NtCurrentProcessId()    ((DWORD)NtCurrentTeb()->ClientId.UniqueProcess())
+#define NtCurrentThreadId()    ((DWORD)(NtCurrentTeb()->ClientId.UniqueThread()))
 #endif
-
 #define ZwCurrentProcessId()    NtCurrentProcessId()
 #define ZwCurrentThreadId()     NtCurrentThreadId()
 
