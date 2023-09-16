@@ -6251,7 +6251,7 @@ RtlIsZeroMemory(
 // Environment
 //
 
-#ifndef _KERNEL_MODE
+#if !defined(_KERNEL_MODE) || defined(_WINDOWS_)
 
 NTSYSAPI
 NTSTATUS
@@ -6380,7 +6380,7 @@ RtlSetEnvironmentStrings(
 // Directory and path support
 //
 
-#ifndef _KERNEL_MODE
+#if !defined(_KERNEL_MODE) || defined(_WINDOWS_)
 
 typedef struct _RTLP_CURDIR_REF
 {
@@ -6673,6 +6673,7 @@ RtlGetLengthWithoutTrailingPathSeperators(
     _Out_ PULONG Length
 );
 
+#if !defined(_KERNEL_MODE)
 typedef struct _GENERATE_NAME_CONTEXT
 {
     USHORT Checksum;
@@ -6683,6 +6684,7 @@ typedef struct _GENERATE_NAME_CONTEXT
     WCHAR ExtensionBuffer[4];
     ULONG LastIndexValue;
 } GENERATE_NAME_CONTEXT, * PGENERATE_NAME_CONTEXT;
+#endif
 
 // private
 NTSYSAPI
@@ -8559,7 +8561,7 @@ RtlNtStatusToDosErrorNoTeb(
     _In_ NTSTATUS Status
 );
 
-#ifndef _KERNEL_MODE
+#if !defined(_KERNEL_MODE) || defined(_WINDOWS_)
 
 NTSYSAPI
 NTSTATUS
@@ -8695,6 +8697,17 @@ NTAPI
 RtlRandomEx(
     _Inout_ PULONG Seed
 );
+
+#if defined(_KERNEL_MODE) && defined(_WINDOWS_)
+_IRQL_requires_max_(PASSIVE_LEVEL)
+NTSYSAPI
+BOOLEAN
+NTAPI
+RtlGenRandom(
+    _Out_writes_bytes_(RandomBufferLength) PVOID RandomBuffer,
+    _In_ ULONG RandomBufferLength
+);
+#endif
 
 #ifndef _KERNEL_MODE
 
@@ -12226,7 +12239,7 @@ RtlGetAppContainerSidType(
 // Fls
 //
 
-#ifndef _KERNEL_MODE
+#if !defined(_KERNEL_MODE) || defined(_WINDOWS_)
 
 NTSYSAPI
 NTSTATUS
